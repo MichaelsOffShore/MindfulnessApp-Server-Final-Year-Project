@@ -6,20 +6,14 @@ const cors = require("cors");
 const helmet = require("helmet");
 const date = require("date-and-time");
 const fs = require("fs");
-
+const http = require("http")
 const app = express();
 const port = 8000;
 const password = 12345;
-
+const server = http.createServer(app);
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(cors());
-
-/*TO-DO ---
-Setup endpoints properly
-Add api key authentication
-Setup mongodb access and collections for data
-*/
 
 // MongoDB Connection
 const uri =
@@ -190,12 +184,15 @@ app.post("/addQuestionnaireData", function requestHandler(req, res) {
   addToDatabase("questionnaireData", req.body);
   res.send(req.body);
 });
-
+/*
 // Starting the server on port
 app.listen(port, () => {
   console.log("Server Listening On Port " + port);
 });
-
+*/
+server.listen(port, () => {
+  console.log("Server Listening On Port " + port);
+});
 var col = client.db("mindfulnessApp").collection("tokens");
 
 const tokenInDatabase = async (data) => {
