@@ -9,7 +9,6 @@ const fs = require("fs");
 const http = require("http")
 const app = express();
 const port = 8000;
-const password = 12345;
 const server = http.createServer(app);
 app.use(helmet());
 app.use(bodyParser.json());
@@ -17,16 +16,13 @@ app.use(cors());
 
 // MongoDB Connection
 const uri =
-  "mongodb+srv://Michael:" +
-  password +
-  "@cluster0.gbexc.mongodb.net/?retryWrites=true&w=majority";
+  "MongoDB Database URL goes here with password!";
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
 
-//closeDBConnnection();
 
 // Main Endpoint
 app.get("/", (req, res) => {
@@ -56,7 +52,6 @@ app.post("/generateToken", function requestHandler(req, res) {
         }
       }
       for (let j = 0; j < prefixBank.length; j++) {
-        // add each to database with +req.body["testKeys"] attached ad checking if already i database
         prefixBank[j] = prefixBank[j] + testKeys;
         data = { token: prefixBank[j], link: taskLink};
         addToDatabase("tokens", data);
@@ -79,12 +74,7 @@ app.get("/tokenValidation", (req, res) => {
 
   tokenInDatabase(d).then((token) => {
     console.log("TOKEN IS: " + token);
-    // res[0] == 1 or 0
-    // res[1] = link
     res.send(token);
-
-  
-  
   });
 });
 
@@ -166,14 +156,6 @@ app.get("/downloadFile", (req, res) => {
 
         res.send(text.substring(0, text.length));
         console.log("file sent");
-        /*
-  fs.unlink(path, (err) => {
-    if (err) {
-      console.log(err);
-    }
-    console.log('FILE [' + "tokens.csv" + '] REMOVED!');
-  });
-  */
       });
     }
   );
@@ -184,12 +166,7 @@ app.post("/addQuestionnaireData", function requestHandler(req, res) {
   addToDatabase("questionnaireData", req.body);
   res.send(req.body);
 });
-/*
-// Starting the server on port
-app.listen(port, () => {
-  console.log("Server Listening On Port " + port);
-});
-*/
+
 server.listen(port, () => {
   console.log("Server Listening On Port " + port);
 });
@@ -203,7 +180,6 @@ const tokenInDatabase = async (data) => {
     console.log("error");
     console.log(err);
   }
-  //return result;
   console.log("RESULT:" + result)
   return result;
 };
@@ -229,46 +205,6 @@ function checkDatabase(data) {
     });
   });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-function checkDatabase(data) {
-  //////
-  return client
-    .db("mindfulnessApp")
-    .collection("tokens")
-    .count(data, { limit: 1 });
-///////
-var res = [0,""];
-
-client
-.db("mindfulnessApp")
-.collection("tokens").find({}).toArray(function(err, docs) {
-// Loop through all documents
-console.log("executing")
-for (let i = 0; i < docs.length; i++) {
-  if(docs[i]["token"] === data){
-    res = [1, docs[i]["link"]];
-  }
-}
-});
-return res;
-  }
-*/
 
 function generateTokenPrefix() {
   const tokenMakerBank = [
